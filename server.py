@@ -19,7 +19,9 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import parse_qs, urlparse
 
 PORT = 8085
-STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+STATIC_DIR = os.path.dirname(os.path.abspath(__file__))
+if not os.path.exists(os.path.join(STATIC_DIR, "index.html")) and os.path.exists(os.path.join(STATIC_DIR, "static", "index.html")):
+    STATIC_DIR = os.path.join(STATIC_DIR, "static")
 SCHEMAS_DIR = "/usr/local/google/home/gcaroline/profile_github/Universal-Commerce-Protocol/ucp/source/schemas"
 
 # Default supported UCP versions

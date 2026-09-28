@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UCP Profile Builder — Universal Commerce Protocol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=20260928_3">
+</head>
+<body>
+  <!-- App Container -->
+  <div class="app-container">
+    <!-- Header / Navbar -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Universal Commerce Protocol</h1>
+          <span class="badge-subtitle">Well-Known Profile Builder (<code>/.well-known/ucp</code>)</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="preset-selector-group">
+          <label for="presetSelect">Load Preset Template:</label>
+          <select id="presetSelect" class="input-select-sm">
+            <option value="">-- Select Preset --</option>
+            <option value="legacy_core">Core UCP v2026-01-01 (Legacy Core)</option>
+            <option value="b2c_retailer">B2C Retailer (Standard Merchant)</option>
+            <option value="minimal_checkout">Minimal Shopping Checkout</option>
+            <option value="full_platform">Full Platform Aggregator</option>
+          </select>
+        </div>
+        <div id="validationBadge" class="status-badge status-valid">
+          <span class="dot"></span>
+          <span class="status-text">Valid Profile</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace (Dual Pane) -->
+    <main class="workspace">
+      <!-- Left Pane: Interactive Form Builder -->
+      <section class="pane form-pane">
+        <div class="pane-header">
+          <h2>Profile Configuration</h2>
+          <p class="pane-description">Configure your protocol version, services, capabilities, and signing keys.</p>
+        </div>
+
+        <div class="form-content">
+          <!-- Step 1: Version & Profile Basic Info -->
+          <div class="card-section">
+            <div class="section-title">
+              <span class="step-num">1</span>
+              <h3>UCP Protocol Version & Metadata</h3>
+            </div>
+            
+            <div class="form-group">
+              <label for="ucpVersion">UCP Version <span class="required-star">*</span></label>
+              <select id="ucpVersion" class="input-control">
+                <!-- Version options injected dynamically -->
+              </select>
+              <span class="input-help">Select the UCP specification version deployed by your endpoint.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="serviceEndpoint">Shopping Service Endpoint (REST API)</label>
+              <input type="url" id="serviceEndpoint" class="input-control" placeholder="https://merchant.example.com/ucp/v1" value="https://business.example.com/ucp/v1">
+              <span class="input-help">The primary base URL serving UCP REST endpoints.</span>
+            </div>
+          </div>
+
+          <!-- Step 2: Capabilities Selection -->
+          <div class="card-section">
+            <div class="section-title">
+              <span class="step-num">2</span>
+              <h3>Supported Capabilities</h3>
+            </div>
+            <p class="section-help">Check the capabilities supported by your UCP implementation for version <strong id="selectedVersionLabel">2026-08-25</strong>.</p>
+            
+            <div class="capability-presets-bar">
+              <button id="btnSelectAll" class="btn-ghost-sm">Select All</button>
+              <button id="btnDeselectAll" class="btn-ghost-sm">Deselect All</button>
+              <button id="btnSelectShoppingOnly" class="btn-ghost-sm">Shopping Only</button>
+            </div>
+
+            <!-- Capabilities Categorized List -->
+            <div id="capabilitiesContainer" class="capabilities-grid">
+              <!-- Dynamically populated capability checkboxes -->
+            </div>
+          </div>
+
+          <!-- Step 3: Capability Details & Configuration Fields -->
+          <div class="card-section">
+            <div class="section-title">
+              <span class="step-num">3</span>
+              <h3>Capability Details & Configuration</h3>
+            </div>
+            <div id="capabilityConfigsContainer" class="capability-configs-list">
+              <!-- Dynamic config forms per selected capability -->
+            </div>
+          </div>
+
+          <!-- Step 4: Payment Handlers -->
+          <div class="card-section">
+            <div class="section-title">
+              <span class="step-num">4</span>
+              <h3>Payment Handlers</h3>
+            </div>
+            <div class="form-group">
+              <label>Active Payment Handlers</label>
+              <div class="checkbox-group-inline">
+                <label class="checkbox-pill">
+                  <input type="checkbox" id="handlerGpay" checked>
+                  <span>Google Pay (<code>com.google.pay</code>)</span>
+                </label>
+                <label class="checkbox-pill">
+                  <input type="checkbox" id="handlerShopPay" checked>
+                  <span>Shop Pay (<code>dev.shopify.shop_pay</code>)</span>
+                </label>
+                <label class="checkbox-pill">
+                  <input type="checkbox" id="handlerStripe">
+                  <span>Stripe (<code>com.stripe</code>)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5: Key Management (JWK Keys) -->
+          <div class="card-section">
+            <div class="section-title">
+              <span class="step-num">5</span>
+              <h3>JWK Public Signing Keys</h3>
+            </div>
+            <p class="section-help">Publish public JSON Web Keys for HTTP Message Signatures and Web Bot Auth (WBA).</p>
+            <div class="key-controls-header">
+              <button id="btnAddKey" class="btn-secondary-sm">+ Add Signing Key</button>
+            </div>
+            <div id="keysContainer" class="keys-list">
+              <!-- Key entries rendered here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Pane: Live JSON Code Editor & Validation -->
+      <section class="pane editor-pane">
+        <div class="pane-header editor-header">
+          <div class="editor-header-title">
+            <h2>/.well-known/ucp Profile JSON</h2>
+            <span class="sync-indicator" id="syncStatus">⚡ 2-Way Sync Active</span>
+          </div>
+
+          <div class="editor-actions">
+            <button id="btnCopyJson" class="btn-action">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+            <button id="btnDownloadJson" class="btn-action btn-primary-action">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Profile
+            </button>
+          </div>
+        </div>
+
+        <!-- Validation Results Banner -->
+        <div id="validationResults" class="validation-banner val-success">
+          <div class="val-header">
+            <strong id="valTitle">✓ Profile Schema Validation Passed</strong>
+          </div>
+          <ul id="valMessageList" class="val-list"></ul>
+        </div>
+
+        <!-- Code Editor Area -->
+        <div class="editor-container">
+          <textarea id="jsonTextarea" class="code-editor" spellcheck="false" placeholder="Generating UCP Profile JSON..."></textarea>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js?v=20260928_3"></script>
+</body>
+</html>
